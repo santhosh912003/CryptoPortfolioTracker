@@ -44,4 +44,24 @@ public class Alert {
         this.triggeredAt = null;
     }
 
+	public String getSymbol() {
+		return symbol;
+	}
+
+	public String getDirection() {
+		return direction;
+	}
+
+	public double getTriggerPrice() {
+		return triggerPrice;
+	}
+
+	public void setTriggered(boolean b) {
+		this.status=b;
+	}
+
+	public void setTriggeredAt(LocalDateTime now) {
+		this.triggeredAt=now;
+	}
+
 }

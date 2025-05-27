@@ -48,6 +48,9 @@ public class CryptPrice {
 	{
 		return timestamp;
 	}
-	
-
+	public double getCurrentPrice(String symbol2) {
+		    if (this.symbol.equals(symbol2)) {
+		        return this.currentPrice;
+		    }
+	}
 }
