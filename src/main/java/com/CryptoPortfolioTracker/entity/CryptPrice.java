@@ -52,5 +52,6 @@ public class CryptPrice {
 		    if (this.symbol.equals(symbol2)) {
 		        return this.currentPrice;
 		    }
+			return currentPrice;
 	}
 }
