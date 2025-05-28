@@ -24,15 +24,15 @@ public class UserController {
     }
 
 
-    @GetMapping("/{id}")
+    @GetMapping("/{userId}")
     public User getUserById(@PathVariable Long id){
-        return service.getUserById(id);
+        return service.getUserById(userId);
     }
 
 
-    @PutMapping("/{id}/role={userRole}")
+    @PutMapping("/{userId}/role={userRole}")
     public UserDto UpdateUser(@PathVariable Long id, @PathVariable String UserRole, @Valid  @RequestBody UserDto user){
-        if(UserRole.toUpperCase().equals("ADMINI")){
+        if(UserRole.toUpperCase().equals("ADMIN")){
             return service.UpdateUser(id,user);
         }
         throw new InvalidRoleException("The user with the current role cannot access this endpoint");
@@ -40,7 +40,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{userId}")
     public String DeleteUserById(@PathVariable Long id){
         return service.DeleteUser(id);
     }

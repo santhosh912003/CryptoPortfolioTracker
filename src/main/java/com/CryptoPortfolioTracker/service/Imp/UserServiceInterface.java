@@ -11,12 +11,12 @@ import java.util.Optional;
 public interface UserServiceInterface {
 
     List<User> getAllUsers();
-    User getUserById(Long id);
+    User getUserById(Long userId);
     UserDto createUser(UserDto user);
 
-    UserDto UpdateUser(Long id, UserDto user);
+    UserDto UpdateUser(Long userId, UserDto user);
 
-    String DeleteUser(Long id);
+    String DeleteUser(Long userId);
 
     String LoginUser(LoginDto user);
 

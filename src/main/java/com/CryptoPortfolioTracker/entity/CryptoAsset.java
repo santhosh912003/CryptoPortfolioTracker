@@ -8,20 +8,21 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "crypto_assets")
 public class CryptoAsset {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cryptoId;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) // FK to User
-    private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) 
+    private User user;
 
     @Column(nullable = false, length = 50)
     private String coinName;
@@ -37,7 +38,5 @@ public class CryptoAsset {
 
     @Column(nullable = false)
     private LocalDate buyDate;
-
-    
 
 }

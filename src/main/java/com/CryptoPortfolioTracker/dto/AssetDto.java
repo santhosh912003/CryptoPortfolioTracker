@@ -4,20 +4,22 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class AssetDto {
-    private Long id;        
-    private Long userId;     
+
+    private Long cryptoId;
+    private Long userId;
     private String coinName;
     private String symbol;
     private BigDecimal quantity;
     private BigDecimal buyPrice;
     private LocalDate buyDate;
 
-    public AssetDto() {
-    }
+    // No-arg constructor
+    public AssetDto() {}
 
-    public AssetDto(Long id, Long userId, String coinName, String symbol,
+    // All-arg constructor
+    public AssetDto(Long cryptoId, Long userId, String coinName, String symbol,
                     BigDecimal quantity, BigDecimal buyPrice, LocalDate buyDate) {
-        this.id = id;
+        this.cryptoId = cryptoId;
         this.userId = userId;
         this.coinName = coinName;
         this.symbol = symbol;
@@ -26,14 +28,12 @@ public class AssetDto {
         this.buyDate = buyDate;
     }
 
-    // Getters and Setters
-
-    public Long getId() {
-        return id;
+    public Long getCryptoId() {
+        return cryptoId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setCryptoId(Long cryptoId) {
+        this.cryptoId = cryptoId;
     }
 
     public Long getUserId() {
