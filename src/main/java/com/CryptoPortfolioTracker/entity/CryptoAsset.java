@@ -16,10 +16,12 @@ import java.time.LocalDate;
 public class CryptoAsset {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long cryptoId;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false) // FK to User
+    private User user;
 
-    @Column(nullable = false)
-    private Long userId;
 
     @Column(nullable = false, length = 50)
     private String coinName;
@@ -36,5 +38,6 @@ public class CryptoAsset {
     @Column(nullable = false)
     private LocalDate buyDate;
 
-	
+    
+
 }
