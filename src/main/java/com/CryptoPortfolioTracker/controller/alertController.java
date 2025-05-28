@@ -1,42 +1,34 @@
 package com.CryptoPortfolioTracker.controller;
 
-import com.CryptoPortfolioTracker.dto.AlertDTO;
+import com.CryptoPortfolioTracker.entity.Alert;
 import com.CryptoPortfolioTracker.service.AlertService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/alerts")
-@RequiredArgsConstructor
 public class alertController {
 
-    private final AlertService alertService;
+    @Autowired
+    private AlertService alertService;
 
     @PostMapping("/create")
-    public ResponseEntity<String> createAlert(@RequestBody AlertDTO alertDto) {
-        AlertService.createAlert(alertDto);
-        return ResponseEntity.ok("Alert created successfully.");
+    public ResponseEntity<Alert> createAlert(@RequestBody Alert alert, @RequestParam Long userId) {
+        alert.setUserId(userId);
+        return ResponseEntity.ok(alertService.createAlert(alert));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<AlertDTO>> getUserAlerts(@PathVariable Long userId) {
-        List<AlertDTO> alerts = AlertService.getAlertsByUserId(userId);
-        return ResponseEntity.ok(alerts);
-        
+    @GetMapping("/my")
+    public ResponseEntity<List<Alert>> getMyAlerts(@RequestParam Long userId) {
+        return ResponseEntity.ok(alertService.getUserAlerts(userId));
     }
 
-    @GetMapping("/user/{userId}/triggered")
-    public ResponseEntity<List<AlertDTO>> getTriggeredAlerts(@PathVariable Long userId) {
-        List<AlertDTO> triggeredAlerts = AlertService.getAlertsByUserIdAndStatus(userId, true);
-        return ResponseEntity.ok(triggeredAlerts);
-    }
-
-    @GetMapping("/user/{userId}/pending")
-    public ResponseEntity<List<AlertDTO>> getPendingAlerts(@PathVariable Long userId) {
-        List<AlertDTO> pendingAlerts = AlertService.getAlertsByUserIdAndStatus(userId, false);
-        return ResponseEntity.ok(pendingAlerts);
+    @GetMapping("/triggered")
+    public ResponseEntity<List<Alert>> getTriggeredAlerts() {
+        return ResponseEntity.ok(alertService.getTriggeredAlerts());
     }
 }

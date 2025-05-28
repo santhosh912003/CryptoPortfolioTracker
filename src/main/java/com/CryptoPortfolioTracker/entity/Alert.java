@@ -1,67 +1,80 @@
 package com.CryptoPortfolioTracker.entity;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Entity
-@Table(name = "Alerts")
 public class Alert {
-    // Getters
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-    @Setter
+    private Long userId;
     private String symbol;
-    @Setter
     private double triggerPrice;
-    @Setter
-    private String direction; // "above" or "below"
-    @Setter
-    private boolean status = false;
-    @Setter
+    private String direction;
+    private String status = "PENDING"; // or "TRIGGERED"
     private LocalDateTime triggeredAt;
 
-    // Default constructor
-    public Alert() {}
-
-    // Parameterized constructor
-    public Alert(User user, String symbol, double triggerPrice, String direction) {
-        this.user = user;
-        this.symbol = symbol;
-        this.triggerPrice = triggerPrice;
-        this.direction = direction;
-        this.status = false;
-        this.triggeredAt = null;
+    public Long getId() {
+        return id;
     }
 
-	public String getSymbol() {
-		return symbol;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getDirection() {
-		return direction;
-	}
+    public LocalDateTime getTriggeredAt() {
+        return triggeredAt;
+    }
 
-	public double getTriggerPrice() {
-		return triggerPrice;
-	}
+    public void setTriggeredAt(LocalDateTime triggeredAt) {
+        this.triggeredAt = triggeredAt;
+    }
 
-	public void setTriggered(boolean b) {
-		this.status=b;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setTriggeredAt(LocalDateTime now) {
-		this.triggeredAt=now;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
+    public String getDirection() {
+        return direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public double getTriggerPrice() {
+        return triggerPrice;
+    }
+
+    public void setTriggerPrice(double triggerPrice) {
+        this.triggerPrice = triggerPrice;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
 }
