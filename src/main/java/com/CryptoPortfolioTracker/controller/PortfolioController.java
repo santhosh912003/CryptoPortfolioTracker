@@ -16,13 +16,13 @@ public class PortfolioController {
     private final PortfolioService portfolioService;
 
     @GetMapping("/my/{userId}")
-    public ResponseEntity<List<AssetDto>> getUserPortfolio(@PathVariable Long userId) {
+    public ResponseEntity<AssetDto> getUserPortfolio(@PathVariable Long userId) {
         return ResponseEntity.ok(portfolioService.getUserPortfolio(userId));
     }
 
     @PostMapping("/assets")
     public ResponseEntity<AssetDto> addAssetToPortfolio(@RequestBody AssetDto assetDto) {
-        return ResponseEntity.ok(portfolioService.addAssetToPortfolio(assetDto.getUserId(), assetDto));
+        return ResponseEntity.ok(portfolioService.addAssetToPortfolio(assetDto));
     }
 
     @PutMapping("/assets/{cryptoId}")

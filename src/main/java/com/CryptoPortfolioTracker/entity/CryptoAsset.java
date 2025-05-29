@@ -21,7 +21,7 @@ public class CryptoAsset {
     private Long cryptoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false) 
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column(nullable = false, length = 50)
@@ -38,5 +38,6 @@ public class CryptoAsset {
 
     @Column(nullable = false)
     private LocalDate buyDate;
+
 
 }

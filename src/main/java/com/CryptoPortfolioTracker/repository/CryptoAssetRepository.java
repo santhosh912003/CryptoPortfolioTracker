@@ -12,12 +12,12 @@ import java.util.Optional;
 
 @Repository
 public interface CryptoAssetRepository extends JpaRepository<CryptoAsset, Long> {
-    
+
     List<CryptoAsset> findByUserUserId(Long userId);
 
     Optional<CryptoAsset> findByCryptoIdAndUserUserId(Long cryptoId, Long userId);
 
     void deleteByCryptoIdAndUserUserId(Long cryptoId, Long userId);
 
-	
+
 }

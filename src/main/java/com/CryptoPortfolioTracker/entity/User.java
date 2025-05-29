@@ -33,7 +33,7 @@ public class User {
     private Role role;
 
 
-    @OneToMany(mappedBy = "user")
-    private Set<CryptoAsset> cryptoAssets;
+//    @OneToMany(mappedBy = "user")
+//    private Set<CryptoAsset> cryptoAssets;
 
 }
