@@ -99,10 +99,7 @@ public class UserService implements UserServiceInterface {
         if(user==null){
             return "Login DTo mapping is null";
         }
-     /*   if (user.getEmail().length()==0) {
-            System.out.println(user.getEmail());
-            return "Email should not be null";
-        }*/
+
         if (!user.getEmail().matches("^[\\w-.]+@[\\w-]+\\.[a-z]{2,}$")) {
             return "Invalid email format";
         }
