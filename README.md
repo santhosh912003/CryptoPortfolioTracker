@@ -179,7 +179,3 @@ http://localhost:8080/swagger-ui/index.html
 
 
 ---
-
-##  Contact
-
-_For queries, contact the project maintainers._
