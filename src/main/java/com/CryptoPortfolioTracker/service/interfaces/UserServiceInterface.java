@@ -1,22 +1,22 @@
-package com.CryptoPortfolioTracker.service.Imp;
+package com.CryptoPortfolioTracker.service.interfaces;
 
 
 import com.CryptoPortfolioTracker.dto.LoginDto;
 import com.CryptoPortfolioTracker.dto.UserDto;
+import com.CryptoPortfolioTracker.dto.UserResponseDto;
 import com.CryptoPortfolioTracker.entity.User;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface UserServiceInterface {
 
     List<User> getAllUsers();
-    User getUserById(Long userId);
-    UserDto createUser(UserDto user);
+    User getUserById(Long Id);
+    UserResponseDto createUser(UserDto user);
 
-    UserDto UpdateUser(Long userId, UserDto user);
+    UserResponseDto UpdateUser(Long Id, UserDto user);
 
-    String DeleteUser(Long userId);
+    String DeleteUser(Long Id);
 
     String LoginUser(LoginDto user);
 

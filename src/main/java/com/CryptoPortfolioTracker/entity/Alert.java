@@ -1,33 +1,39 @@
 package com.CryptoPortfolioTracker.entity;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 @Entity
-@Data
-@AllArgsConstructor
+@Table(name = "alerts")
+@Getter
+@Setter
 @NoArgsConstructor
-@Table(name = "Alerts")
-
+@AllArgsConstructor
+@Builder
 public class Alert {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Reference to User
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    private String symbol;
+
+    @Column(nullable = false)
+    private String symbol; // e.g., BTC, ETH
+
+    @Column(nullable = false)
     private double triggerPrice;
-    private String direction;
-    private String status; // or "TRIGGERED"
-    private LocalDateTime triggeredAt;
 
+    @Column(nullable = false)
+    private String direction; // "above" or "below"
 
+    @Column(nullable = false)
+    private String status; // "pending", "triggered", "resolved"
+
+    private Timestamp triggeredAt;
 }

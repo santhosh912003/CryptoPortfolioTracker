@@ -1,11 +1,12 @@
 package com.CryptoPortfolioTracker.controller.auth;
 
 
+import com.CryptoPortfolioTracker.dto.UserResponseDto;
 import com.CryptoPortfolioTracker.exception.UserNotFoundException;
-import com.CryptoPortfolioTracker.service.UserService;
+import com.CryptoPortfolioTracker.service.Imp.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,51 +14,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.CryptoPortfolioTracker.dto.LoginDto;
 import com.CryptoPortfolioTracker.dto.UserDto;
-import com.CryptoPortfolioTracker.entity.User;
-import com.CryptoPortfolioTracker.repository.UserRepository;
+
 
 import jakarta.validation.Valid;
-/**
- * 
- */
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 @RestController
 @RequestMapping("api/auth")
 public class RegisterController {
 
-//	@PostMapping("/login")
-//	public String HandleLogin(@Valid @RequestBody LoginDto user) {
-//		User ExistingUser = userRepo.findByEmail(user.getEmail());
-//		if(ExistingUser==null) {
-//			return "User Not found";
-//		}
-//
-//		if(encoder.matches(user.getPassword(),ExistingUser.getPassword())) {
-//			return "Login SucessFull";
-//		}
-//
-//		return "Failded to login";
-//	}
+	private static final Logger logger = LoggerFactory.getLogger(RegisterController.class);
 
 	@Autowired
 	private UserService service;
 
-
+	// This handles user registration
 	@PostMapping("/register")
-	public UserDto HandleRegistration( @Valid @RequestBody UserDto user){
-		return service.createUser(user);
+	public UserResponseDto HandleRegistration(@Valid @RequestBody UserDto user){
+		logger.info("Received registration request");
+		UserResponseDto response = service.createUser(user);
+		logger.info("User registration completed");
+		return response;
 	}
 
-
+	// This handles user login
 	@PostMapping("/login")
 	public String HandleLogin(@RequestBody LoginDto user){
-		return service.LoginUser(user);
+		logger.info("Received login request");
+		String response = service.LoginUser(user);
+		logger.info("User login processed");
+		return response;
 	}
-
-
-	
-	
-	
-	
-
 }

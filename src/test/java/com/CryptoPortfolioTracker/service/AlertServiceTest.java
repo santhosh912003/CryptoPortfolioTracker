@@ -1,115 +1,78 @@
 package com.CryptoPortfolioTracker.service;
 
-
-import com.CryptoPortfolioTracker.dto.AlertDTO;
-import com.CryptoPortfolioTracker.dto.CryptoPriceDTO;
+import com.CryptoPortfolioTracker.dto.AlertDto;
 import com.CryptoPortfolioTracker.entity.Alert;
+import com.CryptoPortfolioTracker.entity.User;
 import com.CryptoPortfolioTracker.exception.AlertNotFoundException;
+import com.CryptoPortfolioTracker.exception.UserNotFoundException;
 import com.CryptoPortfolioTracker.repository.AlertRepository;
-import org.junit.jupiter.api.BeforeEach;
+import com.CryptoPortfolioTracker.repository.UserRepository;
+import com.CryptoPortfolioTracker.service.Imp.AlertService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class AlertServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class AlertServiceTest {
 
+    @Mock
     private AlertRepository alertRepository;
-    private CryptoPriceService cryptoPriceService;
-    private ModelMapper modelMapper;
-    private AlertService alertService;
 
-    @BeforeEach
-    void setUp() {
-        alertRepository = mock(AlertRepository.class);
-        cryptoPriceService = mock(CryptoPriceService.class);
-        modelMapper = new ModelMapper();
-        alertService = new AlertService();
-        alertService.alertrepo = alertRepository;
-        alertService.cryptoPriceService = cryptoPriceService;
-        alertService.mapper = modelMapper;
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private ModelMapper modelMapper;
+
+    @InjectMocks
+    private AlertService service;
+
+    @Test
+    void testCreateAlert_UserNotFound() {
+        AlertDto alertDto = new AlertDto();
+        alertDto.setUserId(1L);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> service.createAlert(alertDto));
     }
 
     @Test
-    void testCreateAlerts() {
-        AlertDTO dto = new AlertDTO(null, 1L, "BTC", 30000.0, "ABOVE", null, null);
-        Alert alertEntity = modelMapper.map(dto, Alert.class);
-        alertEntity.setStatus("PENDING");
+    void testUpdateAlert_AlertNotFound() {
+        when(alertRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        when(alertRepository.save(any(Alert.class))).thenAnswer(i -> {
-            Alert saved = i.getArgument(0);
-            saved.setId(100L);
-            return saved;
-        });
-
-        AlertDTO savedDto = alertService.createAlerts(dto);
-
-        assertNotNull(savedDto.getId());
-        assertEquals("BTC", savedDto.getSymbol());
-        assertEquals("PENDING", savedDto.getStatus());
+        assertThrows(AlertNotFoundException.class, () -> service.updateAlert(1L, new AlertDto()));
     }
 
     @Test
     void testGetAllAlerts() {
-        Alert alert = new Alert(1L, null, "BTC", 28000.0, "ABOVE", "PENDING", null);
-        when(alertRepository.findAll()).thenReturn(Collections.singletonList(alert));
+        when(alertRepository.findAll()).thenReturn(Collections.singletonList(new Alert()));
+        when(modelMapper.map(any(Alert.class), eq(AlertDto.class))).thenReturn(new AlertDto());
 
-        List<AlertDTO> alerts = alertService.getAllAlerts();
-
-        assertEquals(1, alerts.size());
-        assertEquals("BTC", alerts.get(0).getSymbol());
+        assertEquals(1, service.getAllAlerts().size());
+        verify(alertRepository, times(1)).findAll();
     }
 
     @Test
-    void testGetAlertById_Found() {
-        Alert alert = new Alert(1L, null, "ETH", 2000.0, "ABOVE", "PENDING", null);
-        when(alertRepository.findById(1L)).thenReturn(Optional.of(alert));
+    void testDeleteAlert_AlertNotFound() {
+        when(alertRepository.existsById(anyLong())).thenReturn(false);
 
-        AlertDTO dto = alertService.getAlertById(1L);
-
-        assertEquals("ETH", dto.getSymbol());
-        assertEquals(2000.0, dto.getTriggerPrice());
+        assertThrows(AlertNotFoundException.class, () -> service.deleteAlert(1L));
     }
 
     @Test
-    void testGetAlertById_NotFound() {
-        when(alertRepository.findById(1L)).thenReturn(Optional.empty());
+    void testDeleteAlert_Success() {
+        when(alertRepository.existsById(anyLong())).thenReturn(true);
 
-        assertThrows(AlertNotFoundException.class, () -> alertService.getAlertById(1L));
+        service.deleteAlert(1L);
+        verify(alertRepository, times(1)).deleteById(1L);
     }
-
-    @Test
-    void testGetMyAlerts() {
-        Alert alert1 = new Alert(1L, null, "BTC", 30000.0, "ABOVE", "PENDING", null);
-        Alert alert2 = new Alert(2L, null, "ETH", 2000.0, "BELOW", "TRIGGERED", null);
-
-        when(alertRepository.findByUserUserId(5L)).thenReturn(Arrays.asList(alert1, alert2));
-
-        List<AlertDTO> result = alertService.getMyAlerts(5L);
-
-        assertEquals(2, result.size());
-    }
-
-    @Test
-    void testGetTriggeredAlerts() {
-        Alert alert = new Alert(1L, null, "XRP", 0.5, "ABOVE", "TRIGGERED", LocalDateTime.now());
-        when(alertRepository.findByStatus("TRIGGERED")).thenReturn(Collections.singletonList(alert));
-
-        List<AlertDTO> triggeredAlerts = alertService.getTriggeredAlerts();
-
-        assertEquals(1, triggeredAlerts.size());
-        assertEquals("TRIGGERED", triggeredAlerts.get(0).getStatus());
-    }
-
-
-
-
 }
-

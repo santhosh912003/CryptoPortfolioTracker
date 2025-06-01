@@ -1,114 +1,117 @@
 package com.CryptoPortfolioTracker.service;
 
+import com.CryptoPortfolioTracker.dto.LoginDto;
+import com.CryptoPortfolioTracker.dto.UserDto;
+import com.CryptoPortfolioTracker.dto.UserResponseDto;
+import com.CryptoPortfolioTracker.entity.Role;
+import com.CryptoPortfolioTracker.entity.User;
+import com.CryptoPortfolioTracker.exception.UserNotFoundException;
+import com.CryptoPortfolioTracker.repository.UserRepository;
+import com.CryptoPortfolioTracker.service.Imp.UserService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.springframework.security.crypto.password.PasswordEncoder;
+public class UserServiceTest {
 
-import com.CryptoPortfolioTracker.dto.LoginDto;
-import com.CryptoPortfolioTracker.dto.UserDto;
-import com.CryptoPortfolioTracker.entity.User;
-import com.CryptoPortfolioTracker.repository.UserRepository;
-
-class UserServiceTest {
-
-    @InjectMocks
+    private UserRepository repo;
+    private PasswordEncoder encoder;
+    private ModelMapper mapper;
     private UserService service;
 
-    @Mock
-    private UserRepository repo;
-
-    @Mock
-    private PasswordEncoder encoder;
-
-    private User user;
-
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        user = new User();
-        user.setUserId(1L);
-        user.setEmail("lavanya04@gmail.com");
-        user.setPassword("encodedPwd");
+    public void setup() {
+        repo = mock(UserRepository.class);
+        encoder = mock(PasswordEncoder.class);
+        mapper = new ModelMapper(); // real mapper for simplicity
+        service = new UserService();
+        service.repo = repo;
+        service.encoder = encoder;
+        service.mapper = mapper;
     }
 
     @Test
-    void testRegisterUser_Success() {
-        UserDto dto = new UserDto();
-        dto.setEmail("lavanya04@gmail.com");
-        dto.setPassword("password123");
+    public void testCreateUser_success() {
+        UserDto userDto = new UserDto();
+        userDto.setName("John");
+        userDto.setEmail("john@example.com");
+        userDto.setPassword("password123");
+        userDto.setRole("USER");
 
-        when(repo.findByEmailIgnoreCase("lavanya04@gmail.com")).thenReturn(null);
-        when(encoder.encode("password123")).thenReturn("encodedPwd");
+        User savedUser = new User();
+        savedUser.setId(1L);
+        savedUser.setName("John");
+        savedUser.setEmail("john@example.com");
+        savedUser.setRole(Role.USER);
+        savedUser.setPassword("encodedPassword");
 
+        when(encoder.encode("password123")).thenReturn("encodedPassword");
+        when(repo.save(any(User.class))).thenReturn(savedUser);
 
+        UserResponseDto response = service.createUser(userDto);
+
+        assertEquals("john@example.com", response.getEmail());
     }
 
     @Test
-    void testRegisterUser_EmailAlreadyExists() {
-        UserDto dto = new UserDto();
-        dto.setEmail("lavanya04@gmail.com");
+    public void testGetUserById_success() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("Alice");
+        user.setEmail("alice@example.com");
 
-        when(repo.findByEmailIgnoreCase("lavanya04@gmail.com")).thenReturn(user);
+        when(repo.findById(1L)).thenReturn(Optional.of(user));
 
-
+        User result = service.getUserById(1L);
+        assertEquals("Alice", result.getName());
     }
 
     @Test
-    void testLoginUser_Success() {
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail("lavanya04@gmail.com");
-        loginDto.setPassword("password123");
+    public void testGetUserById_notFound() {
+        when(repo.findById(99L)).thenReturn(Optional.empty());
 
-        when(repo.findByEmailIgnoreCase("lavanya04@gmail.com")).thenReturn(user);
-        when(encoder.matches("password123", "encodedPwd")).thenReturn(true);
+        assertThrows(UserNotFoundException.class, () -> {
+            service.getUserById(99L);
+        });
+    }
 
-        String result = service.LoginUser(loginDto);
+    @Test
+    public void testLoginUser_success() {
+        LoginDto login = new LoginDto();
+        login.setEmail("john@example.com");
+        login.setPassword("password123");
 
+        User user = new User();
+        user.setEmail("john@example.com");
+        user.setPassword("encodedPassword");
+
+        when(repo.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(encoder.matches("password123", "encodedPassword")).thenReturn(true);
+
+        String result = service.LoginUser(login);
         assertEquals("Login Successful", result);
     }
 
     @Test
-    void testLoginUser_InvalidEmailFormat() {
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail("invalid-email");
-        loginDto.setPassword("password123");
+    public void testLoginUser_invalidPassword() {
+        LoginDto login = new LoginDto();
+        login.setEmail("john@example.com");
+        login.setPassword("wrongpassword");
 
-        String result = service.LoginUser(loginDto);
+        User user = new User();
+        user.setEmail("john@example.com");
+        user.setPassword("encodedPassword");
 
-        assertEquals("Invalid email format", result);
-    }
+        when(repo.findByEmail("john@example.com")).thenReturn(Optional.of(user));
+        when(encoder.matches("wrongpassword", "encodedPassword")).thenReturn(false);
 
-    @Test
-    void testLoginUser_UserNotFound() {
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail("notfound@gmail.com");
-        loginDto.setPassword("Password@123");
-
-        when(repo.findByEmailIgnoreCase("notfound@gmail.com")).thenReturn(null);
-
-        String result = service.LoginUser(loginDto);
-
-        assertEquals("User not found", result);
-    }
-
-    @Test
-    void testLoginUser_WrongPassword() {
-        LoginDto loginDto = new LoginDto();
-        loginDto.setEmail("lavanya04@gmail.com");
-        loginDto.setPassword("wrong@Password1");
-
-        when(repo.findByEmailIgnoreCase("lavanya04@gmail.com")).thenReturn(user);
-        when(encoder.matches("wrongPassword", "encodedPwd")).thenReturn(false);
-
-        String result = service.LoginUser(loginDto);
-
-        assertEquals("Wrong Password", result);
+        String result = service.LoginUser(login);
+        assertEquals("Failed to login: Incorrect credentials", result);
     }
 }

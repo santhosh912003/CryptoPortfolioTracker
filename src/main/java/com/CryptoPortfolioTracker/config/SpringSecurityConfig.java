@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 public class SpringSecurityConfig {
 
 	
-	@Bean
+	 @Bean
 	 public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf().disable() 
             .authorizeHttpRequests(auth -> auth

@@ -10,9 +10,11 @@ import lombok.Setter;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class UserDto {
 
-    private Long userId;
+    private Long Id;
 
     @NotNull(message = "Name is required")
     @Size(min = 2, max = 100, message = "Name must be between 2 and 100 characters")
@@ -23,7 +25,7 @@ public class UserDto {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, message = "Password must be at least 8 characters long")
+    @Size(min = 5, message = "Password must be at least 8 characters long")
     @Pattern(
             regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
             message = "Password must include uppercase, lowercase, number, and special character"

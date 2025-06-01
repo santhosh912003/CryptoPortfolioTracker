@@ -1,11 +1,9 @@
 package com.CryptoPortfolioTracker.controller;
 
-
-import com.CryptoPortfolioTracker.dto.CryptoPriceDTO;
-import com.CryptoPortfolioTracker.entity.CryptPrice;
-import com.CryptoPortfolioTracker.service.CryptoPriceService;
+import com.CryptoPortfolioTracker.dto.CryptoPriceDto;
+import com.CryptoPortfolioTracker.service.Imp.CryptoPriceService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,36 +13,23 @@ import java.util.List;
 public class CryptoPriceController {
 
     @Autowired
-    private CryptoPriceService cryptoPriceService;
+    private CryptoPriceService service;
 
-    // ✅ Get all crypto prices with buyPrice, quantity, currentValue, profitOrLoss
+    // 🔍 Get all crypto prices
     @GetMapping
-    public ResponseEntity<List<CryptoPriceDTO>> getAllPrices() {
-        List<CryptoPriceDTO> prices = cryptoPriceService.getAllPrices();
-        return ResponseEntity.ok(prices);
+    public List<CryptoPriceDto> getAllPrices() {
+        return service.getAllCryptoPrice();
     }
 
-    // ✅ Get a specific crypto price by symbol
-    @GetMapping("/{symbol}")
-    public ResponseEntity<CryptoPriceDTO> getPriceBySymbol(@PathVariable String symbol) {
-        CryptoPriceDTO priceDTO = cryptoPriceService.getPriceBySymbol(symbol);
-        if (priceDTO == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(priceDTO);
+    // 🔍 Get crypto price by ID
+    @GetMapping("/{id}")
+    public CryptoPriceDto getPriceById(@PathVariable Long id) {
+        return service.getCryptoPriceById(id);
     }
 
-    // ✅ Get asset valuation for a user (optional, useful if you still use CryptoAsset)
-    @GetMapping("/valuations/{userId}")
-    public ResponseEntity<List<CryptoPriceDTO>> getAssetValuations(@PathVariable Long userId) {
-        List<CryptoPriceDTO> valuations = cryptoPriceService.getAssetValuations(userId);
-        return ResponseEntity.ok(valuations);
-    }
-
-    // ✅ Add or update crypto prices (with buyPrice, quantity, etc. included)
-    @PostMapping
-    public ResponseEntity<List<CryptPrice>> addOrUpdatePrices(@RequestBody List<CryptPrice> prices) {
-        List<CryptPrice> savedPrices = cryptoPriceService.addOrUpdatePrices(prices);
-        return ResponseEntity.ok(savedPrices);
+    // ➕ Create new crypto price entry
+    @PostMapping("/add")
+    public CryptoPriceDto addPrice(@Valid @RequestBody CryptoPriceDto dto) {
+        return service.createCryptoPrice(dto);
     }
 }
