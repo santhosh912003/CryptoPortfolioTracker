@@ -5,7 +5,7 @@
 **Crypto Portfolio Tracker** is a secure backend application built using **Spring Boot 3.5.0**, enabling users to manage cryptocurrency assets. The system allows users to track holdings, simulate or fetch real-time prices, set price alerts, and monitor profit/loss across their portfolio. It also provides role-based access with secure authentication, and includes full CRUD support for portfolios and alerts.
 
 ---
-
+ 
 ##  Key Features
 
 ###  User & Role Management
